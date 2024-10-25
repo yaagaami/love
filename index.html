@@ -11,8 +11,9 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f0f0f0;
+      background-color: #87CEFA; /* Light blue background */
       margin: 0;
+      overflow: hidden;
     }
     .popup {
       text-align: center;
@@ -20,122 +21,182 @@
       padding: 30px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
-      position: relative;
-      width: 300px;
-      height: 200px;
-      animation: scaleIn 0.5s; /* Animation on popup load */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    h1 {
+      font-size: 24px;
+    }
+    .button-container {
+      display: flex;
+      gap: 20px;
     }
     button {
       padding: 10px 20px;
-      margin: 10px;
       font-size: 16px;
       cursor: pointer;
-      position: absolute;
-      transition: transform 0.3s; /* Smooth button animation */
+      transition: transform 0.3s;
     }
     button:active {
-      transform: scale(0.95); /* Button press effect */
-    }
-    #yes-btn {
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 20px;
-    }
-    #no-btn {
-      left: 50%;
-      transform: translateX(-50%);
-      top: 50px;
-    }
-
-    /* Animation for popup */
-    @keyframes scaleIn {
-      from { transform: scale(0); }
-      to { transform: scale(1); }
-    }
-
-    /* Fade out animation */
-    @keyframes fadeOut {
-      0% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    /* Falling animation */
-    @keyframes fallDown {
-      from { transform: translateY(-100px); }
-      to { transform: translateY(0); }
-    }
-
-    /* Style for message */
-    .message {
-      opacity: 0; /* Start hidden */
-      animation: fadeOut 1s forwards, fallDown 1s forwards;
-      margin-top: 20px; /* Space above the message */
+      transform: scale(0.95);
     }
   </style>
 </head>
 <body>
   <div class="popup" id="popup">
-    <h1>Do you love me?</h1>
-    <button id="yes-btn" onclick="handleYes()">Yes</button>
-    <button id="no-btn" onmouseover="moveNoButton()">No</button>
-    <div id="message" class="message"></div> <!-- Message container -->
+    <h1 id="question">Do you love me?</h1>
+    <div class="button-container">
+      <button id="yes-btn" onclick="handleYes()">Yes</button>
+      <button id="no-btn" onclick="handleNo()" onmouseover="moveNoButton()">No</button>
+    </div>
   </div>
 
   <script>
-    // Sound effects
-    const yesSound = new Audio('path/to/yes-sound.mp3'); // Add path to your sound file
-    const noSound = new Audio('path/to/no-sound.mp3');
+    const messages = [
+      "Thank you, baby, for loving me and for choosing me. 🥰",
+      "I feel incredibly lucky to have you in my life. 🌈",
+      "Your love brings so much joy and warmth to my heart. ❤️✨",
+      "I can’t imagine my life without you. 😢💖",
+      "Every moment we share is a treasure. 💎",
+      "I cherish every laugh and memory we create together. 😂💞",
+      "You make my world a brighter place. 🌟🌻",
+      "I love you more than words can express. 😍💌",
+      "I’m excited for all the adventures that lie ahead for us. 🚀❤️"
+    ];
+
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function changePopupBackgroundColor() {
+      const popup = document.getElementById('popup');
+      popup.style.backgroundColor = getRandomColor();
+    }
 
     function handleYes() {
-      console.log("Yes button clicked"); // Debugging line
-      yesSound.play(); // Play yes sound
-      showFeedback("I knew it! ❤️"); // Show initial message
+      document.getElementById('popup').style.opacity = '0'; // Fade out popup
+      setTimeout(() => {
+        document.getElementById('popup').style.display = 'none';
+        showInitialMessage(); // Show "I knew it!" message
+      }, 500);
+    }
+
+    function handleNo() {
+      // No action required when clicking No since it moves away
     }
 
     function moveNoButton() {
-      noSound.play(); // Play no sound
       const noBtn = document.getElementById('no-btn');
       const popup = document.querySelector('.popup');
-      
-      // Get the popup's width and height
-      const popupWidth = popup.clientWidth;
-      const popupHeight = popup.clientHeight;
-
-      // Generate random positions for the No button within the popup
-      const randomX = Math.random() * (popupWidth - noBtn.offsetWidth);
-      const randomY = Math.random() * (popupHeight - noBtn.offsetHeight);
-
-      // Set the new position of the No button
+      const randomX = Math.random() * (popup.clientWidth - noBtn.offsetWidth);
+      const randomY = Math.random() * (popup.clientHeight - noBtn.offsetHeight - 50);
+      noBtn.style.position = 'absolute';
       noBtn.style.left = `${randomX}px`;
       noBtn.style.top = `${randomY}px`;
+      changePopupBackgroundColor(); // Change background color each time "No" button moves
     }
 
-    function showFeedback(message) {
-      const messageContainer = document.getElementById('message');
-      messageContainer.innerHTML = `<h1>${message}</h1>`; // Display the initial message
-      messageContainer.style.opacity = 1; // Make it visible
+    function showInitialMessage() {
+      const firstMessage = document.createElement('h1');
+      firstMessage.innerHTML = "I knew it! ❤️";
+      firstMessage.style.position = 'fixed';
+      firstMessage.style.left = '50%';
+      firstMessage.style.top = '50%';
+      firstMessage.style.transform = 'translate(-50%, -50%)';
+      firstMessage.style.opacity = '0';
+      firstMessage.style.transition = 'opacity 0.5s ease';
+      document.body.appendChild(firstMessage);
 
-      // After 1 second, change the message
       setTimeout(() => {
-        messageContainer.style.opacity = 0; // Fade out
-      }, 1000); // Adjust time as needed
+        firstMessage.style.opacity = '1'; // Fade in
+      }, 100);
 
-      // After fade out, show the final message
       setTimeout(() => {
-        const finalMessage = `
-          Thank you, baby, for loving me and for choosing me. 🥰<br><br>
-          I feel incredibly lucky to have you in my life. 🌈<br><br>
-          Your love brings so much joy and warmth to my heart. ❤️✨<br><br>
-          I can’t imagine my life without you. 😢💖<br><br>
-          Every moment we share is a treasure. 💎<br><br>
-          I cherish every laugh and memory we create together. 😂💞<br><br>
-          You make my world a brighter place. 🌟🌻<br><br>
-          I love you more than words can express. 😍💌<br><br>
-          I’m excited for all the adventures that lie ahead for us. 🚀❤️
-        `;
-        messageContainer.innerHTML = finalMessage; // Show the final message
-        messageContainer.style.opacity = 1; // Make it visible
-      }, 2000); // Adjust time to match the first fade out
+        firstMessage.style.opacity = '0'; // Fade out
+        setTimeout(() => {
+          document.body.removeChild(firstMessage);
+          showRandomMessages(); // Display the remaining messages
+        }, 500);
+      }, 2000);
+    }
+
+    function showRandomMessages() {
+      const shuffledMessages = messages.sort(() => Math.random() - 0.5);
+      shuffledMessages.forEach((message, index) => {
+        setTimeout(() => {
+          const messageElement = document.createElement('h1');
+          messageElement.innerHTML = message;
+          messageElement.style.position = 'fixed';
+          messageElement.style.left = `${Math.random() * 80}vw`;
+          messageElement.style.top = `${Math.random() * 80}vh`;
+          messageElement.style.opacity = '0';
+          messageElement.style.transition = 'opacity 0.5s ease';
+          document.body.appendChild(messageElement);
+
+          setTimeout(() => {
+            messageElement.style.opacity = '1';
+          }, 100);
+
+          setTimeout(() => {
+            messageElement.style.opacity = '0';
+            setTimeout(() => {
+              document.body.removeChild(messageElement);
+              if (index === shuffledMessages.length - 1) {
+                showFinalMessage(); // Show final message after the last randomized message
+              }
+            }, 500);
+          }, 2000);
+        }, index * 2000);
+      });
+    }
+
+    function showFinalMessage() {
+      const finalMessage = document.createElement('h1');
+      finalMessage.innerHTML = "I love you, Prakriti ❤️";
+      finalMessage.style.position = 'fixed';
+      finalMessage.style.left = '50%';
+      finalMessage.style.top = '50%';
+      finalMessage.style.transform = 'translate(-50%, -50%)';
+      finalMessage.style.opacity = '0';
+      finalMessage.style.transition = 'opacity 0.5s ease';
+      document.body.appendChild(finalMessage);
+
+      setTimeout(() => {
+        finalMessage.style.opacity = '1'; // Fade in final message
+      }, 100);
+
+      setTimeout(() => {
+        finalMessage.style.opacity = '0'; // Fade out final message
+        setTimeout(() => {
+          document.body.removeChild(finalMessage);
+          restartProgram(); // Restart after final message
+        }, 500);
+      }, 2000);
+    }
+
+    function restartProgram() {
+      const noBtn = document.getElementById('no-btn');
+      noBtn.style.position = 'relative'; // Reset "No" button position to be next to "Yes"
+      noBtn.style.left = '0';
+      noBtn.style.top = '0';
+      document.getElementById('popup').style.display = 'flex'; // Show popup again
+      document.getElementById('popup').style.opacity = '1'; // Reset opacity
+      document.getElementById('popup').style.backgroundColor = 'white'; // Reset popup color
     }
   </script>
 </body>
