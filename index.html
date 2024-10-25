@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prakriti's Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+    .popup {
+      text-align: center;
+      background-color: white;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      position: relative;
+      width: 300px;
+      height: 200px;
+      animation: scaleIn 0.5s; /* Animation on popup load */
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      position: absolute;
+      transition: transform 0.3s; /* Smooth button animation */
+    }
+    button:active {
+      transform: scale(0.95); /* Button press effect */
+    }
+    #yes-btn {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20px;
+    }
+    #no-btn {
+      left: 50%;
+      transform: translateX(-50%);
+      top: 50px;
+    }
+
+    /* Animation for popup */
+    @keyframes scaleIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="popup" id="popup">
+    <h1>Do you love me?</h1>
+    <button id="yes-btn" onclick="handleYes()">Yes</button>
+    <button id="no-btn" onmouseover="moveNoButton()">No</button>
+  </div>
+
+  <script>
+    // Sound effects
+    const yesSound = new Audio('path/to/yes-sound.mp3'); // Add path to your sound file
+    const noSound = new Audio('path/to/no-sound.mp3');
+
+    function handleYes() {
+      yesSound.play(); // Play yes sound
+      showFeedback("I knew it! ❤️"); // Just show a message
+    }
+
+    function moveNoButton() {
+      noSound.play(); // Play no sound
+      const noBtn = document.getElementById('no-btn');
+      const popup = document.querySelector('.popup');
+      
+      // Get the popup's width and height
+      const popupWidth = popup.clientWidth;
+      const popupHeight = popup.clientHeight;
+
+      // Generate random positions for the No button within the popup
+      const randomX = Math.random() * (popupWidth - noBtn.offsetWidth);
+      const randomY = Math.random() * (popupHeight - noBtn.offsetHeight);
+
+      // Set the new position of the No button
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+    }
+
+    function showFeedback(message) {
+      const popup = document.getElementById('popup');
+      popup.innerHTML = `<h1>${message}</h1>`; // Display the message without a share option
+    }
+  </script>
+</body>
+</html>
