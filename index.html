@@ -52,6 +52,25 @@
       from { transform: scale(0); }
       to { transform: scale(1); }
     }
+
+    /* Fade out animation */
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Falling animation */
+    @keyframes fallDown {
+      from { transform: translateY(-100px); }
+      to { transform: translateY(0); }
+    }
+
+    /* Style for message */
+    .message {
+      opacity: 0; /* Start hidden */
+      animation: fadeOut 1s forwards, fallDown 1s forwards;
+      margin-top: 20px; /* Space above the message */
+    }
   </style>
 </head>
 <body>
@@ -59,6 +78,7 @@
     <h1>Do you love me?</h1>
     <button id="yes-btn" onclick="handleYes()">Yes</button>
     <button id="no-btn" onmouseover="moveNoButton()">No</button>
+    <div id="message" class="message"></div> <!-- Message container -->
   </div>
 
   <script>
@@ -67,8 +87,9 @@
     const noSound = new Audio('path/to/no-sound.mp3');
 
     function handleYes() {
+      console.log("Yes button clicked"); // Debugging line
       yesSound.play(); // Play yes sound
-      showFeedback("I knew it! ❤️"); // Just show a message
+      showFeedback("I knew it! ❤️"); // Show initial message
     }
 
     function moveNoButton() {
@@ -90,8 +111,31 @@
     }
 
     function showFeedback(message) {
-      const popup = document.getElementById('popup');
-      popup.innerHTML = `<h1>${message}</h1>`; // Display the message without a share option
+      const messageContainer = document.getElementById('message');
+      messageContainer.innerHTML = `<h1>${message}</h1>`; // Display the initial message
+      messageContainer.style.opacity = 1; // Make it visible
+
+      // After 1 second, change the message
+      setTimeout(() => {
+        messageContainer.style.opacity = 0; // Fade out
+      }, 1000); // Adjust time as needed
+
+      // After fade out, show the final message
+      setTimeout(() => {
+        const finalMessage = `
+          Thank you, baby, for loving me and for choosing me. 🥰<br><br>
+          I feel incredibly lucky to have you in my life. 🌈<br><br>
+          Your love brings so much joy and warmth to my heart. ❤️✨<br><br>
+          I can’t imagine my life without you. 😢💖<br><br>
+          Every moment we share is a treasure. 💎<br><br>
+          I cherish every laugh and memory we create together. 😂💞<br><br>
+          You make my world a brighter place. 🌟🌻<br><br>
+          I love you more than words can express. 😍💌<br><br>
+          I’m excited for all the adventures that lie ahead for us. 🚀❤️
+        `;
+        messageContainer.innerHTML = finalMessage; // Show the final message
+        messageContainer.style.opacity = 1; // Make it visible
+      }, 2000); // Adjust time to match the first fade out
     }
   </script>
 </body>
